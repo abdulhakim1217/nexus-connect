@@ -11,12 +11,14 @@ import Matches from "./pages/Matches";
 import Schedule from "./pages/Schedule";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import { AuthProvider } from "@/hooks/useAuth";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <AuthProvider>
       <div className="dark">
         <Toaster />
         <Sonner />
@@ -33,6 +35,7 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </div>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
