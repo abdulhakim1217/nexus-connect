@@ -41,15 +41,15 @@ export function useNotifications() {
 
           const typeMap: Record<string, NotificationType> = {
             match: 'match',
-            connection: 'success',
+            connection: 'match',
             meeting: 'meeting',
-            message: 'success',
-            reminder: 'warning',
-            follow_up: 'success',
+            message: 'message',
+            reminder: 'reminder',
+            follow_up: 'reminder',
           };
 
           showNotification(
-            typeMap[newNotification.type] || 'success',
+            typeMap[newNotification.type] || 'message',
             newNotification.title,
             newNotification.message || ''
           );
