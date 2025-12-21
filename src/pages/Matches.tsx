@@ -3,23 +3,25 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
   Search, 
-  Filter, 
-  Star, 
   MessageCircle, 
   Calendar, 
   Sparkles,
   MapPin,
   Briefcase,
   Heart,
-  RefreshCw
+  RefreshCw,
+  CheckCircle
 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import GlassCard from '@/components/ui/GlassCard';
 import NeonButton from '@/components/ui/NeonButton';
 import ChipTag from '@/components/ui/ChipTag';
+import ChatPanel from '@/components/ui/ChatPanel';
+import ScheduleModal from '@/components/ui/ScheduleModal';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { useMatches } from '@/hooks/useMatches';
+import { useConnections } from '@/hooks/useConnections';
 
 const filters = ['All', 'High Match (90%+)', 'Connected', 'Pending'];
 
@@ -27,10 +29,22 @@ const Matches = () => {
   const navigate = useNavigate();
   const { session, loading: authLoading } = useAuth();
   const { matches, loading: matchesLoading, generateMatches, updateMatchStatus } = useMatches();
+  const { createConnection, isConnected } = useConnections();
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  
+  // Chat state
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatUserId, setChatUserId] = useState<string | undefined>();
+  const [chatUserName, setChatUserName] = useState<string | undefined>();
+  
+  // Schedule state
+  const [scheduleOpen, setScheduleOpen] = useState(false);
+  const [scheduleUserId, setScheduleUserId] = useState('');
+  const [scheduleUserName, setScheduleUserName] = useState('');
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -48,11 +62,12 @@ const Matches = () => {
       (matchedProfile.title?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
       (matchedProfile.company?.toLowerCase() || '').includes(searchTerm.toLowerCase());
     
+    const connected = isConnected(match.matched_user_id);
     const matchesFilter =
       activeFilter === 'All' ||
       (activeFilter === 'High Match (90%+)' && (match.match_score || 0) >= 90) ||
-      (activeFilter === 'Connected' && match.status === 'connected') ||
-      (activeFilter === 'Pending' && match.status === 'pending');
+      (activeFilter === 'Connected' && connected) ||
+      (activeFilter === 'Pending' && match.status === 'pending' && !connected);
 
     return matchesSearch && matchesFilter;
   });
@@ -71,28 +86,35 @@ const Matches = () => {
     setIsGenerating(false);
   };
 
-  const handleConnect = async (matchId: string, matchName: string) => {
+  const handleConnect = async (matchId: string, matchedUserId: string, matchName: string) => {
     try {
       await updateMatchStatus(matchId, 'pending');
-      toast({ title: 'Connection Request Sent', description: `Waiting for ${matchName} to accept.` });
+      toast({ title: 'Connecting...', description: `Sending request to ${matchName}.` });
       
-      // Simulate connection acceptance after 3 seconds
-      setTimeout(async () => {
+      // Create actual connection
+      const success = await createConnection(matchedUserId, matchId);
+      
+      if (success) {
         await updateMatchStatus(matchId, 'connected');
         toast({ title: 'Connected!', description: `You are now connected with ${matchName}.` });
-      }, 3000);
+      } else {
+        toast({ title: 'Error', description: 'Failed to create connection.', variant: 'destructive' });
+      }
     } catch (error) {
       toast({ title: 'Error', description: 'Failed to send connection request.', variant: 'destructive' });
     }
   };
 
-  const handleMessage = (matchName: string) => {
-    toast({ title: 'Opening Chat', description: `Starting conversation with ${matchName}...` });
+  const handleMessage = (userId: string, userName: string) => {
+    setChatUserId(userId);
+    setChatUserName(userName);
+    setChatOpen(true);
   };
 
-  const handleSchedule = (matchName: string) => {
-    toast({ title: 'Schedule Meeting', description: `Opening scheduler for ${matchName}...` });
-    navigate('/schedule');
+  const handleSchedule = (userId: string, userName: string) => {
+    setScheduleUserId(userId);
+    setScheduleUserName(userName);
+    setScheduleOpen(true);
   };
 
   const getMatchScoreColor = (score: number) => {
@@ -189,6 +211,8 @@ const Matches = () => {
               {filteredMatches.map((match, index) => {
                 const profile = match.matched_profile;
                 if (!profile) return null;
+                
+                const connected = isConnected(match.matched_user_id);
 
                 return (
                   <motion.div
@@ -204,14 +228,24 @@ const Matches = () => {
                       onClick={() => setExpandedCard(expandedCard === match.id ? null : match.id)}
                     >
                       {/* Match Score Badge */}
-                      <div className="absolute top-4 right-4 z-10">
+                      <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+                        {connected && (
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="px-2 py-1 rounded-full bg-accent/20 text-accent text-xs font-medium flex items-center gap-1"
+                          >
+                            <CheckCircle className="w-3 h-3" />
+                            Connected
+                          </motion.div>
+                        )}
                         <motion.div
                           className={`px-3 py-1.5 rounded-full bg-gradient-to-r ${getMatchScoreColor(match.match_score || 0)} text-white text-sm font-bold shadow-lg`}
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
                           transition={{ type: 'spring', delay: 0.2 + index * 0.05 }}
                         >
-                          {match.match_score || 0}% Match
+                          {match.match_score || 0}%
                         </motion.div>
                       </div>
 
@@ -302,12 +336,15 @@ const Matches = () => {
 
                         {/* Actions */}
                         <div className="flex gap-2 pt-2">
-                          {match.status === 'connected' ? (
+                          {connected ? (
                             <>
                               <NeonButton
                                 size="sm"
                                 className="flex-1"
-                                onClick={(e) => { e.stopPropagation(); handleMessage(profile.full_name || 'User'); }}
+                                onClick={(e) => { 
+                                  e.stopPropagation(); 
+                                  handleMessage(profile.id, profile.full_name || 'User'); 
+                                }}
                               >
                                 <MessageCircle className="w-4 h-4" />
                                 <span>Message</span>
@@ -315,7 +352,10 @@ const Matches = () => {
                               <NeonButton
                                 size="sm"
                                 variant="secondary"
-                                onClick={(e) => { e.stopPropagation(); handleSchedule(profile.full_name || 'User'); }}
+                                onClick={(e) => { 
+                                  e.stopPropagation(); 
+                                  handleSchedule(profile.id, profile.full_name || 'User'); 
+                                }}
                               >
                                 <Calendar className="w-4 h-4" />
                               </NeonButton>
@@ -329,7 +369,10 @@ const Matches = () => {
                               <NeonButton
                                 size="sm"
                                 className="flex-1"
-                                onClick={(e) => { e.stopPropagation(); handleConnect(match.id, profile.full_name || 'User'); }}
+                                onClick={(e) => { 
+                                  e.stopPropagation(); 
+                                  handleConnect(match.id, match.matched_user_id, profile.full_name || 'User'); 
+                                }}
                               >
                                 <Heart className="w-4 h-4" />
                                 <span>Connect</span>
@@ -337,7 +380,10 @@ const Matches = () => {
                               <NeonButton
                                 size="sm"
                                 variant="secondary"
-                                onClick={(e) => { e.stopPropagation(); handleSchedule(profile.full_name || 'User'); }}
+                                onClick={(e) => { 
+                                  e.stopPropagation(); 
+                                  handleSchedule(profile.id, profile.full_name || 'User'); 
+                                }}
                               >
                                 <Calendar className="w-4 h-4" />
                               </NeonButton>
@@ -374,6 +420,26 @@ const Matches = () => {
           </motion.div>
         )}
       </div>
+
+      {/* Chat Panel */}
+      <ChatPanel
+        isOpen={chatOpen}
+        onClose={() => {
+          setChatOpen(false);
+          setChatUserId(undefined);
+          setChatUserName(undefined);
+        }}
+        initialUserId={chatUserId}
+        initialUserName={chatUserName}
+      />
+
+      {/* Schedule Modal */}
+      <ScheduleModal
+        isOpen={scheduleOpen}
+        onClose={() => setScheduleOpen(false)}
+        attendeeId={scheduleUserId}
+        attendeeName={scheduleUserName}
+      />
     </Layout>
   );
 };
