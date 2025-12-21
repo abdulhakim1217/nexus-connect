@@ -11,6 +11,7 @@ interface ChatPanelProps {
   onClose: () => void;
   initialUserId?: string;
   initialUserName?: string;
+  onOpen?: () => void;
 }
 
 const ChatPanel = ({ isOpen, onClose, initialUserId, initialUserName }: ChatPanelProps) => {
@@ -48,6 +49,8 @@ const ChatPanel = ({ isOpen, onClose, initialUserId, initialUserName }: ChatPane
     const success = await sendMessage(inputValue);
     if (success) {
       setInputValue('');
+      // Close panel after successful send so users can continue without the panel
+      if (onClose) onClose();
     }
     setSending(false);
   };
@@ -84,7 +87,18 @@ const ChatPanel = ({ isOpen, onClose, initialUserId, initialUserName }: ChatPane
   }, {} as Record<string, typeof messages>);
 
   return (
-    <AnimatePresence>
+    <>
+      {/* Floating button when panel is closed */}
+      {!isOpen && (
+        <button
+          aria-label="Open chat"
+          onClick={() => onOpen && onOpen()}
+          className="fixed z-40 right-6 bottom-6 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:scale-105 transition-transform"
+        >
+          <MessageCircle className="w-6 h-6" />
+        </button>
+      )}
+      <AnimatePresence>
       {isOpen && (
         <motion.div
           initial={{ opacity: 0, x: '100%' }}
@@ -190,7 +204,8 @@ const ChatPanel = ({ isOpen, onClose, initialUserId, initialUserName }: ChatPane
           </div>
         </motion.div>
       )}
-    </AnimatePresence>
+      </AnimatePresence>
+    </>
   );
 };
 

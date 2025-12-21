@@ -468,9 +468,11 @@ const Matches = () => {
           setChatUserId(undefined);
           setChatUserName(undefined);
         }}
+        onOpen={() => setChatOpen(true)}
         initialUserId={chatUserId}
         initialUserName={chatUserName}
       />
+      {/* Floating chat open handler */}
 
       {/* Schedule Modal */}
       <ScheduleModal
