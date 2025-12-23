@@ -17,6 +17,7 @@ import AnimatedBackground from './ui/AnimatedBackground';
 import AIChatbot from './ui/AIChatbot';
 import { NotificationBell, NotificationPanel, NotificationToastContainer } from './ui/NotificationCenter';
 import QRCodeModal from './ui/QRCodeModal';
+import { ThemeToggle } from './ui/ThemeToggle';
 import { cn } from '@/lib/utils';
 
 interface LayoutProps {
@@ -91,6 +92,9 @@ const Layout = ({ children }: LayoutProps) => {
 
             {/* Action buttons */}
             <div className="flex items-center gap-2">
+              {/* Theme Toggle */}
+              <ThemeToggle />
+
               {/* QR Code Button */}
               <motion.button
                 onClick={() => setQrModalOpen(true)}
