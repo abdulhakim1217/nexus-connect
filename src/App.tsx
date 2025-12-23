@@ -16,6 +16,12 @@ import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "@/hooks/useAuth";
 import { useMessageNotifications } from "@/hooks/useMessageNotifications";
+import { useTheme } from "@/hooks/useTheme";
+
+function ThemeWrapper({ children }: { children: React.ReactNode }) {
+  useTheme(); // Initialize theme on mount
+  return <>{children}</>;
+}
 
 function NotificationProvider({ children }: { children: React.ReactNode }) {
   useMessageNotifications();
@@ -58,8 +64,9 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AuthProvider>
-          <NotificationProvider>
-            <div className="dark">
+          <ThemeWrapper>
+            <NotificationProvider>
+              <div>
               <Toaster />
               <Sonner />
               <BrowserRouter>
@@ -77,8 +84,9 @@ export default function App() {
               </BrowserRouter>
             </div>
           </NotificationProvider>
-        </AuthProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
-  );
+        </ThemeWrapper>
+      </AuthProvider>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 }
