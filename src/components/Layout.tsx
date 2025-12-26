@@ -19,6 +19,7 @@ import { NotificationBell, NotificationPanel, NotificationToastContainer } from 
 import QRCodeModal from './ui/QRCodeModal';
 import { ThemeToggle } from './ui/ThemeToggle';
 import { cn } from '@/lib/utils';
+import logo from '@/assets/logo.jpeg';
 
 interface LayoutProps {
   children: ReactNode;
@@ -54,16 +55,11 @@ const Layout = ({ children }: LayoutProps) => {
           <div className="flex items-center justify-between px-6 py-4">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2">
-              <motion.div
-                className="w-10 h-10 rounded-xl bg-gradient-to-r from-primary to-accent flex items-center justify-center"
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Sparkles className="w-5 h-5 text-white" />
-              </motion.div>
-              <span className="text-xl font-bold gradient-text hidden sm:block">
-                MeetMate
-              </span>
+              <img 
+                src={logo} 
+                alt="MeetMate Logo" 
+                className="h-8 w-auto"
+              />
             </Link>
 
             {/* Desktop Navigation */}

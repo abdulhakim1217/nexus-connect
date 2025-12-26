@@ -14,6 +14,8 @@ import GlassCard from '@/components/ui/GlassCard';
 import NeonButton from '@/components/ui/NeonButton';
 import { useDemoNotifications } from '@/hooks/useDemoNotifications';
 import { useAuth } from '@/hooks/useAuth';
+import Event from ".././assets/tech.png"
+import Conference from ".././assets/techconnect.png"
 
 const features = [
   {
@@ -42,17 +44,18 @@ const features = [
   },
 ];
 
-const stats = [
-  { value: '10K+', label: 'Connections Made' },
-  { value: '500+', label: 'Conferences' },
-  { value: '95%', label: 'Match Accuracy' },
-  { value: '4.9★', label: 'User Rating' },
-];
 
 const Index = () => {
   const { session } = useAuth();
   // Enable demo notifications only for non-authenticated users
   useDemoNotifications(!session);
+
+  const stats = [
+    { label: 'Events Attended', value: '1.2k' },
+    { label: 'Connections Made', value: '8.4k' },
+    { label: 'Average Match Score', value: '92%' },
+    { label: 'Live Conferences', value: '18' },
+  ];
 
   return (
     <Layout>
@@ -65,21 +68,15 @@ const Index = () => {
             transition={{ duration: 0.6 }}
             className="space-y-6"
           >
-            <motion.div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20"
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2 }}
-            >
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-sm text-primary font-medium">AI-Powered Conference Networking</span>
-            </motion.div>
+           
+              
+              <span className=''>AI-Powered Conference Networking</span>
 
-            <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-              <span className="text-foreground">Turn Networking into</span>
+            <h3 className="text-5xl md:text-7xl font-bold leading-tight">
+              <span className="text-foreground">Turn Passive Networking into</span>
               <br />
-              <span className="gradient-text">Meaningful Connections</span>
-            </h1>
+              <span className="text-foreground">Meaningful Connections</span>
+            </h3>
 
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               MeetMate uses AI to match you with the right people at conferences. 
@@ -147,6 +144,34 @@ const Index = () => {
           </motion.div>
         </section>
 
+        {/* Event Images Gallery - responsive for mobile & tablet */}
+        <section className="max-w-6xl mx-auto px-4">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+          >
+            <div className="rounded-xl overflow-hidden shadow-lg">
+              <img
+                src={Event}
+                alt="MeetMate event networking"
+                className="w-full h-56 sm:h-64 md:h-80 object-cover"
+                loading="lazy"
+              />
+            </div>
+
+            <div className="rounded-xl overflow-hidden shadow-lg">
+              <img
+                src={Conference}
+                alt="Conference attendees using MeetMate"
+                className="w-full h-56 sm:h-64 md:h-80 object-cover"
+                loading="lazy"
+              />
+            </div>
+          </motion.div>
+        </section>
+
         {/* Features Section */}
         <section className="space-y-12">
           <motion.div
@@ -208,14 +233,13 @@ const Index = () => {
               />
               <div className="relative z-10 space-y-6">
                 <h2 className="text-3xl md:text-4xl font-bold">
-                  Ready to <span className="gradient-text">Transform</span> Your Networking?
+                  Ready to Transform Your Networking?
                 </h2>
                 <p className="text-lg text-muted-foreground max-w-xl mx-auto">
                   Join thousands of professionals already using MeetMate to build meaningful connections.
                 </p>
                 <Link to={session ? "/matches" : "/auth"}>
                   <NeonButton size="lg">
-                    <Sparkles className="w-5 h-5" />
                     <span>{session ? "View Your Matches" : "Start Free Trial"}</span>
                     <ArrowRight className="w-5 h-5" />
                   </NeonButton>

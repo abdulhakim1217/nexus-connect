@@ -18,6 +18,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import NeonButton from '@/components/ui/NeonButton';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import logo from '@/assets/logo.jpeg';
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -111,20 +112,11 @@ const Auth = () => {
           transition={{ duration: 0.6 }}
         >
           <div className="flex items-center justify-center md:justify-start gap-3">
-            <motion.div
-              className="w-14 h-14 rounded-2xl bg-gradient-to-r from-primary to-accent flex items-center justify-center shadow-glow-primary"
-              animate={{
-                boxShadow: [
-                  '0 0 20px hsl(217 91% 60% / 0.5)',
-                  '0 0 40px hsl(217 91% 60% / 0.7)',
-                  '0 0 20px hsl(217 91% 60% / 0.5)',
-                ],
-              }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              <Sparkles className="w-7 h-7 text-white" />
-            </motion.div>
-            <span className="text-3xl font-bold gradient-text">MeetMate</span>
+            <img 
+              src={logo} 
+              alt="MeetMate Logo" 
+              className="h-12 w-auto"
+            />
           </div>
 
           <div className="space-y-4">
