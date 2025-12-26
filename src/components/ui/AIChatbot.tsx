@@ -27,7 +27,7 @@ const quickActions = [
   { label: 'Schedule follow-up', icon: Calendar },
 ];
 
-const AIChatbot = () => {
+export const AIChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -48,6 +48,15 @@ const AIChatbot = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Close on Escape
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) setIsOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen]);
 
   const handleSend = async () => {
     if (!inputValue.trim()) return;
@@ -99,7 +108,9 @@ const AIChatbot = () => {
     <>
       {/* Floating Chat Button */}
       <motion.button
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-r from-primary to-accent shadow-glow-primary flex items-center justify-center"
+        aria-label="Open AI assistant"
+        title="Open AI assistant"
+        className="fixed bottom-4 right-4 z-50 w-12 h-12 sm:bottom-6 sm:right-6 sm:w-14 sm:h-14 rounded-full bg-gradient-to-r from-primary to-accent shadow-glow-primary flex items-center justify-center"
         onClick={() => setIsOpen(true)}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
@@ -118,14 +129,24 @@ const AIChatbot = () => {
           },
         }}
       >
-        <MessageCircle className="w-6 h-6 text-white" />
+        <Bot className="w-6 h-6 text-white" />
       </motion.button>
 
       {/* Chat Window */}
       <AnimatePresence>
         {isOpen && (
+          <>
+            {/* Mobile backdrop - tapping closes chat */}
+            <motion.div
+              className="fixed inset-0 z-40 bg-background/80 sm:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+            />
+
           <motion.div
-            className="fixed bottom-24 right-6 z-50 w-96 max-w-[calc(100vw-3rem)]"
+            className="fixed bottom-0 left-0 right-0 z-50 sm:bottom-24 sm:right-6 sm:left-auto sm:w-96 sm:max-w-[calc(100vw-3rem)] sm:rounded-2xl rounded-t-xl mx-auto max-h-[85vh] overflow-hidden"
             initial={{ opacity: 0, y: 20, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
@@ -154,6 +175,8 @@ const AIChatbot = () => {
                   </div>
                 </div>
                 <motion.button
+                  aria-label="Close chat"
+                  title="Close chat"
                   className="p-2 rounded-full hover:bg-muted/50 transition-colors"
                   onClick={() => setIsOpen(false)}
                   whileHover={{ scale: 1.1 }}
@@ -276,6 +299,7 @@ const AIChatbot = () => {
               </div>
             </GlassCard>
           </motion.div>
+            </>
         )}
       </AnimatePresence>
     </>

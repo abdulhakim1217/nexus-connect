@@ -210,6 +210,41 @@
     box-shadow: 0 0 20px hsl(var(--primary) / 0.2);
   }
 
+  /* Blue variant for neon buttons (primary) */
+  .neon-button-blue {
+    @apply relative px-6 py-3 rounded-xl font-semibold text-foreground overflow-hidden;
+    background: linear-gradient(135deg, hsl(var(--neon-blue)) 0%, hsl(var(--neon-cyan)) 100%);
+    box-shadow:
+      0 4px 18px hsl(var(--neon-blue) / 0.35),
+      inset 0 1px 0 hsl(var(--foreground) / 0.2);
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .neon-button-blue:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow:
+      0 10px 40px hsl(var(--neon-blue) / 0.5),
+      0 0 45px hsl(var(--neon-cyan) / 0.25),
+      inset 0 1px 0 hsl(var(--foreground) / 0.2);
+  }
+
+  /* Multi-color animated neon button */
+  .neon-button-multi {
+    @apply relative px-6 py-3 rounded-xl font-semibold text-foreground overflow-hidden;
+    background: linear-gradient(45deg, hsl(var(--neon-blue)), hsl(var(--neon-green)), hsl(var(--neon-purple)), hsl(var(--neon-cyan)));
+    background-size: 300% 300%;
+    animation: gradient-shift 6s ease-in-out infinite;
+    box-shadow:
+      0 6px 24px hsl(var(--neon-blue) / 0.28),
+      inset 0 1px 0 hsl(var(--foreground) / 0.15);
+    transition: transform 0.2s ease;
+  }
+
+  .neon-button-multi:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 10px 40px hsl(var(--neon-green) / 0.32), 0 0 50px hsl(var(--neon-purple) / 0.18);
+  }
+
   /* Chip Tags */
   .chip-tag {
     @apply inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium;

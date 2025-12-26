@@ -16,7 +16,6 @@ import Layout from '@/components/Layout';
 import GlassCard from '@/components/ui/GlassCard';
 import NeonButton from '@/components/ui/NeonButton';
 import ChipTag from '@/components/ui/ChipTag';
-import ChatPanel from '@/components/ui/ChatPanel';
 import ScheduleModal from '@/components/ui/ScheduleModal';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
@@ -36,10 +35,7 @@ const Matches = () => {
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   
-  // Chat state
-  const [chatOpen, setChatOpen] = useState(false);
-  const [chatUserId, setChatUserId] = useState<string | undefined>();
-  const [chatUserName, setChatUserName] = useState<string | undefined>();
+ 
   
   // Schedule state
   const [scheduleOpen, setScheduleOpen] = useState(false);
@@ -120,10 +116,9 @@ const Matches = () => {
     }
   };
 
-  const handleMessage = (userId: string, userName: string) => {
-    setChatUserId(userId);
-    setChatUserName(userName);
-    setChatOpen(true);
+  // Messages are handled in the main Messages page; navigate there when user clicks Message
+  const handleMessage = (userId: string) => {
+    navigate(`/messages?user=${userId}`);
   };
 
   const handleSchedule = (userId: string, userName: string) => {
@@ -158,7 +153,7 @@ const Matches = () => {
           animate={{ opacity: 1, y: 0 }}
         >
           <h1 className="text-4xl md:text-5xl font-bold">
-            <span className="gradient-text">AI-Powered</span> Matches
+            <span className="">AI-Powered Matches</span> 
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Discover professionals who share your interests, skills, and goals
@@ -175,7 +170,7 @@ const Matches = () => {
               </>
             ) : (
               <>
-                <Sparkles className="w-4 h-4" />
+                
                 <span>Generate AI Matches</span>
               </>
             )}
@@ -358,7 +353,7 @@ const Matches = () => {
                                 className="flex-1"
                                 onClick={(e) => { 
                                   e.stopPropagation(); 
-                                  handleMessage(profile.id, profile.full_name || 'User'); 
+                                  handleMessage(profile.id); 
                                 }}
                               >
                                 <MessageCircle className="w-4 h-4" />
@@ -460,19 +455,7 @@ const Matches = () => {
         )}
       </div>
 
-      {/* Chat Panel */}
-      <ChatPanel
-        isOpen={chatOpen}
-        onClose={() => {
-          setChatOpen(false);
-          setChatUserId(undefined);
-          setChatUserName(undefined);
-        }}
-        onOpen={() => setChatOpen(true)}
-        initialUserId={chatUserId}
-        initialUserName={chatUserName}
-      />
-      {/* Floating chat open handler */}
+      {/* Chat is handled on the main Messages page */}
 
       {/* Schedule Modal */}
       <ScheduleModal

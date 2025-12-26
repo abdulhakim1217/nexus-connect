@@ -94,12 +94,6 @@ const QRCodeGenerator = ({ profileId, name, onClose }: QRCodeGeneratorProps) => 
             level="H"
             bgColor="#ffffff"
             fgColor="#1a1a2e"
-            imageSettings={{
-              src: '/favicon.ico',
-              height: 40,
-              width: 40,
-              excavate: true,
-            }}
           />
         </div>
         <motion.div

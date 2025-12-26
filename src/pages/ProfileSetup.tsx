@@ -195,7 +195,7 @@ const ProfileSetup = () => {
                   {/* Avatar Upload */}
                   <div className="flex justify-center">
                     <motion.label
-                      className="relative w-28 h-28 rounded-full cursor-pointer group"
+                      className="relative w-20 h-20 sm:w-28 sm:h-28 rounded-full cursor-pointer group"
                       whileHover={{ scale: 1.05 }}
                     >
                       <input
@@ -221,7 +221,7 @@ const ProfileSetup = () => {
                     </motion.label>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">Full Name</label>
                       <input
@@ -244,7 +244,7 @@ const ProfileSetup = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">Company</label>
                       <input

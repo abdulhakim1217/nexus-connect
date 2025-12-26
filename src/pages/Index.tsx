@@ -152,23 +152,43 @@ const Index = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25 }}
           >
-            <div className="rounded-xl overflow-hidden shadow-lg">
+            <figure className="relative rounded-xl overflow-hidden shadow-lg group">
               <img
                 src={Event}
                 alt="MeetMate event networking"
-                className="w-full h-56 sm:h-64 md:h-80 object-cover"
+                className="w-full h-56 sm:h-64 md:h-80 lg:h-96 object-cover transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"
               />
-            </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              <figcaption className="absolute left-4 bottom-4 text-left text-white">
+                <h4 className="text-lg font-bold">Networking Night</h4>
+                <p className="text-sm text-white/90">Meet like-minded professionals and grow your network.</p>
+                <div className="mt-3">
+                  <Link to="/matches">
+                    <NeonButton size="sm" className="bg-white/10">See Matches</NeonButton>
+                  </Link>
+                </div>
+              </figcaption>
+            </figure>
 
-            <div className="rounded-xl overflow-hidden shadow-lg">
+            <figure className="relative rounded-xl overflow-hidden shadow-lg group">
               <img
                 src={Conference}
                 alt="Conference attendees using MeetMate"
-                className="w-full h-56 sm:h-64 md:h-80 object-cover"
+                className="w-full h-56 sm:h-64 md:h-80 lg:h-96 object-cover transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"
               />
-            </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              <figcaption className="absolute left-4 bottom-4 text-left text-white">
+                <h4 className="text-lg font-bold">Tech Connect 2025</h4>
+                <p className="text-sm text-white/90">Real-time matches and on-site scheduling made easy.</p>
+                <div className="mt-3">
+                  <Link to="/auth">
+                    <NeonButton size="sm" className="bg-white/10">Get Started</NeonButton>
+                  </Link>
+                </div>
+              </figcaption>
+            </figure>
           </motion.div>
         </section>
 
@@ -181,7 +201,7 @@ const Index = () => {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl md:text-4xl font-bold">
-              <span className="gradient-text">Everything You Need</span> to Network Smarter
+              <span className="">Everything You Need</span> to Network Smarter
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               From AI matching to real-time notifications, we've got you covered.

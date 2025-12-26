@@ -115,7 +115,7 @@ const Auth = () => {
             <img 
               src={logo} 
               alt="MeetMate Logo" 
-              className="h-12 w-auto"
+              className="h-16 sm:h-20 w-auto"
             />
           </div>
 

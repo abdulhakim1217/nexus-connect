@@ -143,11 +143,11 @@ const Profile = () => {
           className="flex items-center justify-between"
         >
           <div>
-            <h1 className="text-4xl font-bold gradient-text">My Profile</h1>
+            <h1 className="text-4xl font-bold">My Profile</h1>
             <p className="text-muted-foreground mt-1">Manage your professional profile</p>
           </div>
           {!isEditing ? (
-            <div className="flex gap-3">
+            <div className="flex gap-3 flex-wrap">
               <NeonButton variant="secondary" onClick={() => setShowQRModal(true)}>
                 <QrCode className="w-4 h-4" />
                 <span>Share QR</span>
@@ -162,7 +162,7 @@ const Profile = () => {
               </NeonButton>
             </div>
           ) : (
-            <div className="flex gap-3">
+            <div className="flex gap-3 flex-wrap">
               <NeonButton variant="secondary" onClick={handleCancel}>
                 <X className="w-4 h-4" />
                 <span>Cancel</span>
@@ -195,7 +195,7 @@ const Profile = () => {
                   {/* Avatar Upload */}
                   <div className="flex justify-center">
                     <motion.label
-                      className="relative w-32 h-32 rounded-full cursor-pointer group"
+                      className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-full cursor-pointer group"
                       whileHover={{ scale: 1.05 }}
                     >
                       <input
@@ -215,7 +215,7 @@ const Profile = () => {
                     </motion.label>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium mb-2">Name</label>
                       <input
@@ -256,11 +256,11 @@ const Profile = () => {
 
                   <div>
                     <label className="block text-sm font-medium mb-2">Bio</label>
-                    <textarea
-                      value={editForm.bio}
-                      onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
-                      className="neon-input min-h-[100px] resize-none"
-                    />
+                      <textarea
+                        value={editForm.bio}
+                        onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
+                        className="neon-input min-h-[100px] resize-none"
+                      />
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -299,13 +299,13 @@ const Profile = () => {
               {/* Profile Header */}
               <GlassCard className="p-8" glow="primary">
                 <div className="flex flex-col md:flex-row items-center gap-8">
-                  <motion.img
-                    src={displayProfile.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face'}
-                    alt={displayProfile.full_name || 'Profile'}
-                    className="w-32 h-32 rounded-full object-cover border-4 border-primary/50"
-                    whileHover={{ scale: 1.05 }}
-                  />
-                  <div className="text-center md:text-left flex-1">
+                    <motion.img
+                      src={displayProfile.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face'}
+                      alt={displayProfile.full_name || 'Profile'}
+                      className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-primary/50"
+                      whileHover={{ scale: 1.05 }}
+                    />
+                    <div className="text-center md:text-left flex-1 min-w-0">
                     <h2 className="text-3xl font-bold text-foreground">{displayProfile.full_name || 'Your Name'}</h2>
                     <p className="text-lg text-primary">{displayProfile.title || 'Your Title'}</p>
                     <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-3 text-muted-foreground">

@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 
 interface NeonButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
   children: ReactNode;
-  variant?: 'primary' | 'secondary' | 'accent' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'accent' | 'ghost' | 'multi' | 'blue';
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   disabled?: boolean;
@@ -19,7 +19,9 @@ const NeonButton = ({
   ...props
 }: NeonButtonProps) => {
   const variants = {
-    primary: 'neon-button',
+    primary: 'neon-button-blue',
+    blue: 'neon-button-blue',
+    multi: 'neon-button-multi',
     secondary: 'neon-button-secondary',
     accent: 'bg-gradient-to-r from-accent to-accent/80 text-accent-foreground shadow-glow-accent',
     ghost: 'bg-transparent border border-border hover:bg-muted/50 hover:border-primary/50',

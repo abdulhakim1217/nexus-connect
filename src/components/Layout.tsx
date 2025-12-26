@@ -14,7 +14,7 @@ import {
   MessageCircle
 } from 'lucide-react';
 import AnimatedBackground from './ui/AnimatedBackground';
-import AIChatbot from './ui/AIChatbot';
+import { AIChatbot } from './ui/AIChatbot';
 import { NotificationBell, NotificationPanel, NotificationToastContainer } from './ui/NotificationCenter';
 import QRCodeModal from './ui/QRCodeModal';
 import { ThemeToggle } from './ui/ThemeToggle';
@@ -58,7 +58,7 @@ const Layout = ({ children }: LayoutProps) => {
               <img 
                 src={logo} 
                 alt="MeetMate Logo" 
-                className="h-8 w-auto"
+                className="h-10 sm:h-12 w-auto"
               />
             </Link>
 

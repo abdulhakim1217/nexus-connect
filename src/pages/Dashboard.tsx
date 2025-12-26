@@ -24,7 +24,7 @@ interface Metric {
   value: number;
   change: number;
   icon: typeof Users;
-  color: string;
+  color: 'primary' | 'accent' | 'secondary';
 }
 
 interface AnalyticsData {
@@ -42,6 +42,7 @@ const Dashboard = () => {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [topMatches, setTopMatches] = useState<any[]>([]);
+  const [meetings, setMeetings] = useState<any[]>([]);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -55,6 +56,7 @@ const Dashboard = () => {
     if (session?.user?.id) {
       fetchAnalytics();
       fetchTopMatches();
+      fetchMeetings();
     }
   }, [session?.user?.id]);
 
@@ -106,6 +108,25 @@ const Dashboard = () => {
       setTopMatches(data || []);
     } catch (error) {
       console.error('Error fetching top matches:', error);
+    }
+  };
+
+  const fetchMeetings = async () => {
+    if (!session?.user?.id) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('meetings')
+        .select(`id, title, scheduled_at, duration_minutes, status, organizer_id, attendee_id, organizer:organizer_id (full_name, avatar_url), attendee:attendee_id (full_name, avatar_url)`)
+        .or(`organizer_id.eq.${session.user.id},attendee_id.eq.${session.user.id}`)
+        .gte('scheduled_at', new Date().toISOString())
+        .order('scheduled_at', { ascending: true })
+        .limit(6);
+
+      if (error) throw error;
+      setMeetings(data || []);
+    } catch (error) {
+      console.error('Error fetching meetings:', error);
     }
   };
 
@@ -192,7 +213,7 @@ const Dashboard = () => {
         >
           <div className="space-y-2">
             <h1 className="text-4xl font-bold">
-              <span className="gradient-text">Analytics</span> Dashboard
+              <span className="">Analytics Dashboard</span> 
             </h1>
             <p className="text-muted-foreground">Track your networking success</p>
           </div>
@@ -228,8 +249,8 @@ const Dashboard = () => {
             >
               <GlassCard className="p-6" glow={metric.color as any}>
                 <div className="flex items-center justify-between mb-4">
-                  <div className={`w-12 h-12 rounded-xl bg-${metric.color}/20 flex items-center justify-center`}>
-                    <metric.icon className={`w-6 h-6 text-${metric.color}`} />
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${metric.color === 'primary' ? 'bg-primary/20' : metric.color === 'accent' ? 'bg-accent/20' : 'bg-secondary/20'}`}>
+                    <metric.icon className={`w-6 h-6 ${metric.color === 'primary' ? 'text-primary' : metric.color === 'accent' ? 'text-accent' : 'text-secondary'}`} />
                   </div>
                   <motion.span
                     className="text-sm font-medium text-accent"
@@ -264,9 +285,9 @@ const Dashboard = () => {
           >
             <GlassCard className="p-6">
               <h3 className="text-lg font-bold mb-6">Weekly Activity</h3>
-              <div className="space-y-4">
+              <div className="space-y-4 overflow-x-auto">
                 {chartData.map((data, index) => (
-                  <div key={data.day} className="space-y-2">
+                  <div key={data.day} className="space-y-2 min-w-[260px]">
                     <div className="flex items-center justify-between text-sm">
                       <span className="font-medium w-12">{data.day}</span>
                       <span className="text-muted-foreground">{data.matches} matches</span>
@@ -319,6 +340,29 @@ const Dashboard = () => {
                   <p className="text-sm text-muted-foreground text-center py-4">No matches yet</p>
                 )}
               </div>
+              <div className="mt-4 pt-4 border-t border-muted/20">
+                <h4 className="text-sm font-semibold mb-3">Upcoming Meetings</h4>
+                <div className="space-y-3">
+                  {meetings.length > 0 ? (
+                    meetings.map((m: any) => (
+                      <div key={m.id} className="flex items-center gap-3">
+                        <img
+                          src={m.attendee?.avatar_url || m.organizer?.avatar_url || 'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=60&h=60&fit=crop&crop=face'}
+                          alt={m.attendee?.full_name || m.organizer?.full_name || 'User'}
+                          className="w-10 h-10 rounded-xl object-cover"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-foreground truncate">{m.title || 'Meeting'}</p>
+                          <p className="text-xs text-muted-foreground truncate">{new Date(m.scheduled_at).toLocaleString()}</p>
+                        </div>
+                        <div className="text-sm font-medium text-accent">{m.status || 'scheduled'}</div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No upcoming meetings</p>
+                  )}
+                </div>
+              </div>
             </GlassCard>
           </motion.div>
         </div>
@@ -330,31 +374,27 @@ const Dashboard = () => {
           transition={{ delay: 0.5 }}
         >
           <GlassCard className="p-6">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-4 flex-wrap gap-4">
               <h3 className="text-lg font-bold">Engagement Heatmap</h3>
-              <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-muted" /> Low</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-primary/50" /> Medium</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-accent/70" /> High</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-accent" /> Very High</span>
+              <div className="flex items-center gap-4">
+                <span className="flex items-center gap-1 text-sm"><span className="w-3 h-3 rounded bg-primary/50" /> Medium</span>
+                <span className="flex items-center gap-1 text-sm"><span className="w-3 h-3 rounded bg-accent/70" /> High</span>
+                <span className="flex items-center gap-1 text-sm"><span className="w-3 h-3 rounded bg-accent" /> Very High</span>
               </div>
             </div>
+
             <div className="flex gap-2 justify-center flex-wrap">
               {engagementData.map((slot, index) => (
                 <motion.div
                   key={slot.time}
                   className="text-center"
-                  initial={{ opacity: 0, scale: 0.8 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.6 + index * 0.05 }}
                 >
                   <motion.div
-                    className={`w-12 h-12 rounded-xl ${getHeatmapColor(slot.level)} transition-colors`}
-                    whileHover={{ scale: 1.1 }}
-                    animate={slot.level === 'very-high' ? {
-                      boxShadow: ['0 0 0px hsl(var(--accent)/0)', '0 0 15px hsl(var(--accent)/0.5)', '0 0 0px hsl(var(--accent)/0)']
-                    } : {}}
-                    transition={{ duration: 2, repeat: Infinity }}
+                    className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${getHeatmapColor(slot.level)} transition-colors`}
+                    whileHover={{ scale: 1.06 }}
                   />
                   <span className="text-xs text-muted-foreground mt-1 block">{slot.time}</span>
                 </motion.div>
