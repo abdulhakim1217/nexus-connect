@@ -70,7 +70,7 @@ const Index = () => {
           >
            
               
-              <span className=''>AI-Powered Conference Networking</span>
+              <h2>welcome to meetmate</h2>
 
             <h3 className="text-5xl md:text-7xl font-bold leading-tight">
               <span className="text-foreground">Turn Passive Networking into</span>
